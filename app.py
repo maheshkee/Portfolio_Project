@@ -1,85 +1,114 @@
+import sqlite3
 from flask import Flask, render_template, abort
 
 app = Flask(__name__)
 
-
-# -------------------------
-# Fake data (temporary)
-# -------------------------
-
-FAKE_STUDENTS = {
-    "23CS045": {
-        "student_name": "Mahesh Kumar",
-        "about_text": (
-            "Computer Science student passionate about backend engineering, "
-            "system design, and building things from scratch."
-        ),
-        "profile_image_url": "/static/images/Mahadev.jpg",
-        "github_url": "https://github.com/maheshkee",
-        "linkedin_url": "https://linkedin.com/in/maheshkee",
-        "email": "mahesh@example.com",
-        "skills": ["Python", "Flask", "SQL"],
-        "projects": ["Exam Preparation Tracker", "QR Code Generator"],
-        "current_learning": ["System Design", "Networking"]
-    }
-}
+DB_PATH = "db/aikaryashala.db"
 
 
-# -------------------------
-# Route 1: Root / Health
-# -------------------------
+# -------------------------------------------------
+# Helper: get a database connection (READ ONLY)
+# -------------------------------------------------
+def get_db_connection():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row  # allows row["column_name"]
+    return conn
 
+
+# -------------------------------------------------
+# Route 1: Health check
+# -------------------------------------------------
 @app.route("/")
 def health():
     return "Aikaryashala server is running."
 
 
-# -------------------------
+# -------------------------------------------------
 # Route 2: Student Home Page
-# -------------------------
-
+# -------------------------------------------------
 @app.route("/Aikaryashala/Vidhyarthi/<student_id>")
 def student_home(student_id):
-    student = FAKE_STUDENTS.get(student_id)
+    conn = get_db_connection()
 
-    if not student:
+    # 1️⃣ Fetch user by student_id
+    user = conn.execute(
+        "SELECT * FROM users WHERE student_id = ?",
+        (student_id,)
+    ).fetchone()
+
+    if user is None:
+        conn.close()
         abort(404)
+
+    conn.close()
 
     return render_template(
         "home.html",
-        student_name=student["student_name"],
-        about_text=student["about_text"],
-        profile_image_url=student["profile_image_url"],
-        github_url=student["github_url"],
-        linkedin_url=student["linkedin_url"],
-        email=student["email"],
+        student_name=user["name"],
+        about_text=user["about_text"],
+        profile_image_url=user["profile_photo_path"],
+        github_url=user["github_url"],
+        linkedin_url=user["linkedin_url"],
+        email=user["email"],
         capabilities_url=f"/Aikaryashala/Vidhyarthi/{student_id}/capabilities"
     )
 
 
-# -------------------------
+# -------------------------------------------------
 # Route 3: Student Capabilities Page
-# -------------------------
-
+# -------------------------------------------------
 @app.route("/Aikaryashala/Vidhyarthi/<student_id>/capabilities")
 def student_capabilities(student_id):
-    student = FAKE_STUDENTS.get(student_id)
+    conn = get_db_connection()
 
-    if not student:
+    # 1️⃣ Fetch user
+    user = conn.execute(
+        "SELECT * FROM users WHERE student_id = ?",
+        (student_id,)
+    ).fetchone()
+
+    if user is None:
+        conn.close()
         abort(404)
+
+    user_id = user["id"]
+
+    # 2️⃣ Fetch skills
+    skills_rows = conn.execute(
+        "SELECT skill_name FROM skills WHERE user_id = ?",
+        (user_id,)
+    ).fetchall()
+
+    # 3️⃣ Fetch projects
+    projects_rows = conn.execute(
+        "SELECT project_name FROM projects WHERE user_id = ?",
+        (user_id,)
+    ).fetchall()
+
+    # 4️⃣ Fetch current learning
+    learning_rows = conn.execute(
+        "SELECT topic_name FROM current_learning WHERE user_id = ?",
+        (user_id,)
+    ).fetchall()
+
+    conn.close()
+
+    # Convert rows → simple lists
+    skills = [row["skill_name"] for row in skills_rows]
+    projects = [row["project_name"] for row in projects_rows]
+    current_learning = [row["topic_name"] for row in learning_rows]
 
     return render_template(
         "capabilities.html",
-        student_name=student["student_name"],
-        skills=student["skills"],
-        projects=student["projects"],
-        current_learning=student["current_learning"]
+        student_name=user["name"],
+        skills=skills,
+        projects=projects,
+        current_learning=current_learning
     )
 
 
-# -------------------------
-# App Entry Point
-# -------------------------
-
+# -------------------------------------------------
+# App entry point
+# -------------------------------------------------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001, debug=True)
