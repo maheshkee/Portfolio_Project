@@ -5,7 +5,7 @@
 
 ### next stage 
 
-- to take the data through url and dynamically produce html page
+- to take the data through form and dynamically produce portfolio url
 
 ### final stage
 
