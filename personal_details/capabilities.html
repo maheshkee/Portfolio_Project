@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ student_name }} | Capabilities</title>
-
+    <title>Capabilities</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
@@ -28,33 +27,31 @@
 
 <body>
 
-<h1>{{ student_name }}</h1>
+<h1>Capabilities</h1>
 
 <section>
     <h2>Skills</h2>
     <ul>
-        {% for skill in skills %}
-            <li>{{ skill }}</li>
-        {% endfor %}
+        <li>Python</li>
+        <li>HTTP</li>
+        <li>Linux</li>
+        <li>SQL</li>
     </ul>
 </section>
 
 <section>
     <h2>Projects</h2>
-    <ul>
-        {% for project in projects %}
-            <li>{{ project }}</li>
-        {% endfor %}
-    </ul>
+    <p>Exam Preparation Tracker (Backend)</p>
+     <p>
+            A backend system to help users track daily exam preparation tasks and syllabus progress.
+     </p>
+    <p></p>
 </section>
 
 <section>
-    <h2>Current Learning</h2>
-    <ul>
-        {% for topic in current_learning %}
-            <li>{{ topic }}</li>
-        {% endfor %}
-    </ul>
+    <h2>Currently Learning</h2>
+    <p>APIs Integration with Database</p>
+    <p>Authentication & authorization internals</p>
 </section>
 
 </body>
