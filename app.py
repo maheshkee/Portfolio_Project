@@ -1,3 +1,4 @@
+import qrcode
 import sqlite3
 import os
 from werkzeug.utils import secure_filename
@@ -11,6 +12,10 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # configuration for db
 DB_PATH = "db/aikaryashala.db"
+
+# configuration for qr code
+QR_FOLDER = "static/qr_codes"
+os.makedirs(QR_FOLDER, exist_ok=True)
 
 
 app = Flask(__name__)
@@ -52,6 +57,8 @@ def student_home(student_id):
         (student_id,)
     ).fetchone()
 
+    qr_code_path = user["qr_code_path"]
+    
     if user is None:
         conn.close()
         abort(404)
@@ -67,6 +74,7 @@ def student_home(student_id):
         linkedin_url=user["linkedin_url"],
         email=user["email"],
         capabilities_url=f"/Aikaryashala/Vidhyarthi/{student_id}/capabilities"
+        qr_code_path=qr_code_path
     )
 
 
@@ -193,6 +201,27 @@ def register_submit():
         )
 
         conn.commit()
+
+# BUILD portfolio URL
+        portfolio_url = request.url_root.rstrip("/") + f"/Aikaryashala/Vidhyarthi/{student_id}"
+# GENERATE QR image
+        qr_img = qrcode.make(portfolio_url)
+        
+        qr_filename = f"{student_id}.png"
+        qr_save_path = os.path.join(QR_FOLDER, qr_filename)
+        
+        qr_img.save(qr_save_path)
+# BUILD QR URL PATH (browser path)
+        qr_code_path = f"/static/qr_codes/{qr_filename}"
+
+# STORE QR PATH IN DB
+        cursor.execute(
+            "UPDATE users SET qr_code_path = ? WHERE student_id = ?",
+            (qr_code_path, student_id),
+        )
+        conn.commit()
+        
+        
 
     except sqlite3.IntegrityError as e:
         conn.close()
