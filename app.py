@@ -1,10 +1,25 @@
 import sqlite3
+import os
+from werkzeug.utils import secure_filename
 from flask import Flask, render_template, abort, request, redirect, url_for
+
+# configuration for photo path
+UPLOAD_FOLDER = "static/uploads/profile_photos"
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
+
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# configuration for db
+DB_PATH = "db/aikaryashala.db"
 
 
 app = Flask(__name__)
 
-DB_PATH = "db/aikaryashala.db"
+# helper function to make sure correct file upload
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 
 
 # -------------------------------------------------
@@ -125,6 +140,22 @@ def register_submit():
     github_url = request.form.get("github_url")
     linkedin_url = request.form.get("linkedin_url")
     about_text = request.form.get("about_text")
+
+    photo = request.files.get("profile_photo")
+    
+    # Default image
+    profile_photo_path = "/static/images/Mahadev.jpg"
+    
+    if photo and photo.filename != "":
+        if allowed_file(photo.filename):
+            ext = photo.filename.rsplit(".", 1)[1].lower()
+            filename = f"{student_id}.{ext}"
+    
+            save_path = os.path.join(UPLOAD_FOLDER, filename)
+            photo.save(save_path)
+    
+            profile_photo_path = f"/static/uploads/profile_photos/{filename}"
+    
 
     # 1️⃣ Basic validation
     if not student_id or not name or not email:
