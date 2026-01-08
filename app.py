@@ -168,6 +168,25 @@ def register_submit():
         f"/Aikaryashala/Vidhyarthi/{student_id}"
     )
 
+# -------------------------------------------------
+# Route 6 : to see db for debuggingprocess
+# -------------------------------------------------
+@app.route("/debug/users")
+def debug_users():
+    conn = get_db_connection()
+
+    users = conn.execute(
+        """
+        SELECT id, student_id, name, email, github_url, linkedin_url
+        FROM users
+        """
+    ).fetchall()
+
+    conn.close()
+
+    return {
+        "users": [dict(user) for user in users]
+    }
 
 
 # -------------------------------------------------
