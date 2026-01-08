@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Registration | Aikaryashala</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .note {
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+
+    <h1>Student Registration</h1>
+
+    <form method="POST" action="/register">
+
+        <label for="student_id">Student ID *</label>
+        <input type="text" id="student_id" name="student_id" required>
+
+        <label for="name">Full Name *</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="email">Email *</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="github_url">GitHub URL</label>
+        <input type="url" id="github_url" name="github_url">
+
+        <label for="linkedin_url">LinkedIn URL</label>
+        <input type="url" id="linkedin_url" name="linkedin_url">
+
+        <label for="about_text">About</label>
+        <textarea id="about_text" name="about_text" rows="4"></textarea>
+
+        <button type="submit">Create My Portfolio</button>
+
+    </form>
+
+    <p class="note">
+        * Required fields. After registration, you will get a unique portfolio URL.
+    </p>
+
+</div>
+</body>
+</html>
