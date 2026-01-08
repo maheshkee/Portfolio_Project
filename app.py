@@ -1,5 +1,6 @@
 import sqlite3
-from flask import Flask, render_template, abort
+from flask import Flask, render_template, abort, request, redirect, url_for
+
 
 app = Flask(__name__)
 
@@ -105,6 +106,68 @@ def student_capabilities(student_id):
         projects=projects,
         current_learning=current_learning
     )
+
+# -------------------------------------------------
+# Route 4: Show Registration Form
+# -------------------------------------------------
+@app.route("/register", methods=["GET"])
+def register_form():
+    return render_template("register.html")
+
+# -------------------------------------------------
+# Route 4: Handle Submission
+# -------------------------------------------------
+@app.route("/register", methods=["POST"])
+def register_submit():
+    student_id = request.form.get("student_id")
+    name = request.form.get("name")
+    email = request.form.get("email")
+    github_url = request.form.get("github_url")
+    linkedin_url = request.form.get("linkedin_url")
+    about_text = request.form.get("about_text")
+
+    # 1️⃣ Basic validation
+    if not student_id or not name or not email:
+        return "Student ID, Name, and Email are required", 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # 2️⃣ Insert into users table
+        cursor.execute(
+            """
+            INSERT INTO users (
+                student_id, name, email,
+                github_url, linkedin_url,
+                profile_photo_path, about_text
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                student_id,
+                name,
+                email,
+                github_url,
+                linkedin_url,
+                "/static/images/default.jpg",
+                about_text,
+            ),
+        )
+
+        conn.commit()
+
+    except sqlite3.IntegrityError as e:
+        conn.close()
+        return "Student ID or Email already exists", 400
+
+    conn.close()
+
+    # 3️⃣ Redirect to portfolio page
+    return redirect(
+        f"/Aikaryashala/Vidhyarthi/{student_id}"
+    )
+
 
 
 # -------------------------------------------------
