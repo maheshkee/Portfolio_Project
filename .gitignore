@@ -1,1 +1,8 @@
+# User uploaded profile photos
+static/uploads/
+
+# Generated QR codes
+static/qr_codes/
+
+# SQLite database
 db/*.db
