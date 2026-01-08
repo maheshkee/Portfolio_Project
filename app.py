@@ -73,7 +73,7 @@ def student_home(student_id):
         github_url=user["github_url"],
         linkedin_url=user["linkedin_url"],
         email=user["email"],
-        capabilities_url=f"/Aikaryashala/Vidhyarthi/{student_id}/capabilities"
+        capabilities_url=f"/Aikaryashala/Vidhyarthi/{student_id}/capabilities",
         qr_code_path=qr_code_path
     )
 
