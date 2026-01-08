@@ -74,7 +74,7 @@
 
     <h1>Student Registration</h1>
 
-    <form method="POST" action="/register">
+    <form method="POST" action="/register" enctype="multipart/form-data">
 
         <label for="student_id">Student ID *</label>
         <input type="text" id="student_id" name="student_id" required>
@@ -93,6 +93,10 @@
 
         <label for="about_text">About</label>
         <textarea id="about_text" name="about_text" rows="4"></textarea>
+
+        <label for="profile_photo">Profile Photo</label>
+        <input type="file" id="profile_photo" name="profile_photo" accept="image/*">
+        
 
         <button type="submit">Create My Portfolio</button>
 
