@@ -148,13 +148,18 @@ def register_submit():
     
     if photo and photo.filename != "":
         if allowed_file(photo.filename):
-            ext = photo.filename.rsplit(".", 1)[1].lower()
+            original_filename = secure_filename(photo.filename)
+            ext = original_filename.rsplit(".", 1)[1].lower()
             filename = f"{student_id}.{ext}"
+            
     
             save_path = os.path.join(UPLOAD_FOLDER, filename)
             photo.save(save_path)
     
             profile_photo_path = f"/static/uploads/profile_photos/{filename}"
+    # for debugging purposes if photo uploaded properly
+    print("FILES RECEIVED:", request.files)
+    print("PROFILE PHOTO:", request.files.get("profile_photo"))
     
 
     # 1️⃣ Basic validation
@@ -165,6 +170,7 @@ def register_submit():
     cursor = conn.cursor()
 
     try:
+        print("FINAL PHOTO PATH BEFORE INSERT:", profile_photo_path)
         # 2️⃣ Insert into users table
         cursor.execute(
             """
@@ -181,7 +187,7 @@ def register_submit():
                 email,
                 github_url,
                 linkedin_url,
-                "/static/images/default.jpg",
+                profile_photo_path,
                 about_text,
             ),
         )
