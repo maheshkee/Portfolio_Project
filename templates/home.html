@@ -82,6 +82,13 @@
          class="profile-pic">
     <p>Image path: {{ profile_image_url }}</p>
 
+    <img src="{{ qr_code_path }}" alt="QR Code">
+    
+    <a href="{{ qr_code_path }}" download>
+        Download QR Code
+    </a>
+    
+
     <h1>{{ student_name }}</h1>
 
     <p class="about">
@@ -104,6 +111,16 @@
 
     <a href="{{ capabilities_url }}" class="capabilities-btn">
         View Capabilities
+    </a>
+
+    <h3>Portfolio QR Code</h3>
+    
+    <img src="{{ qr_code_path }}" alt="Portfolio QR Code" width="180">
+    
+    <br><br>
+    
+    <a href="{{ qr_code_path }}" download>
+        Download QR Code
     </a>
 
 </div>
